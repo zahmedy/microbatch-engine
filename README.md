@@ -29,6 +29,33 @@ I want to stop “hoping” my tensors align and start **knowing**:
 - how AMP changes dtypes without changing shapes
 - how to debug shape + broadcasting bugs fast
 
+## Shape contrast 
+### Input (B, 1, 28, 28) (Batch, Channel , Hieght, Width)
+### After Conv1/ReLU/Pool (B, 8, 14, 14)
+### After Conv2/ReLU/Pool (B, 16, 7, 7)
+### After flatten (B, 16*7*7)
+### Model output logits (B, 10)
+### Labels (B, )
+
+## Batch Format
+### (x, y)
+- x: (B, 1, 28, 28)
+- y: (B, )
+
+## Micro-batch split
+### Engine Split along dim=0
+### Produce N micro-batches:
+- x_i: (B/N, 1, 28, 28)
+- y_i: (B/N, )
+
+## Engine Contract
+- Batch: (x, y)
+- Engine only splits on dim=0 (batch axis)
+- Call zero_grad() once before micro-batch loop
+- For each micro-batch: forward → loss → scale loss → backward
+- After loop: optimizer.step()
+- Return metrics: full-batch loss (and optionally grad norm)
+
 ## Features (planned)
 ### Phase 1 — Micro-batch engine
 - Split a batch into N micro-batches

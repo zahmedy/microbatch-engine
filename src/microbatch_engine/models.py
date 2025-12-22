@@ -24,9 +24,7 @@ class SimpleCNN(nn.Module):
 
     def forward(self, x):
         x = self.features(x)
-        print(x.shape)
         logits = self.classifier(x)
-        print(x.shape)
 
         return logits 
 

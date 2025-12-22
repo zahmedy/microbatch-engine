@@ -12,3 +12,4 @@ STD = 0.3081
 LR = 0.001
 DEVICE = "mps" if torch.backends.mps.is_available() else "cpu"
 EPOCHS = 5
+MICROBATCHS = 4

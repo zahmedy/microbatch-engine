@@ -4,6 +4,9 @@ from microbatch_engine.data import get_dataloaders
 from microbatch_engine.config import DEVICE, LR, EPOCHS
 
 from torch import nn, optim
+import random
+import numpy as np
+import torch
 
 def train_one_epoch(dataloader):
     model = SimpleCNN()
@@ -23,6 +26,13 @@ def train_one_epoch(dataloader):
         optimizer.step()
 
     return total_loss, model.get_parameter
+
+def seed_all(seed):
+    """Set all randomness to seed for reproducaiblity"""
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.mps.manual_seed(seed)
 
         
 

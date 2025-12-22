@@ -1,38 +1,40 @@
 import torch
 
-
 class MicroBatchEngine():
     def __init__(self, model, optimizer, loss_fn, microbatches=4) -> None:
-        self.model = model 
+        self.model = model.to()
         self.optimizer = optimizer
         self.loss_fn = loss_fn
         self.microbatches = microbatches
 
     def train_step(self, batch):
-        x, y = batch            #((channels, hieght, width), (labels,))
+        x, y = batch            #((batch, channels, hieght, width), (batch,))
         assert x.dim() == 4
         assert y.dim() == 1
-        assert x[0] % self.microbatches == 0
 
         self.optimizer.zero_grad()
 
         B = x.shape[0] # Full batch size from tensor
+        assert B % self.microbatches == 0
 
         microbatch_losses = []
         loss = 0
-        for microbatch in range(B/self.microbatches):
-            x_i, y_i = batch[microbatch]
+        for microbatch in range(self.microbatches):
+            x_chunks = x.chunk(self.microbatches, dim=0)
+            y_chunks = y.chunk(self.microbatches, dim=0)
+            x_i, y_i = x_chunks[microbatch], y_chunks[microbatch]
 
             logits = self.model(x_i)
+
             loss_i = self.loss_fn(logits, y_i)
             b = x_i.shape[0]
             scale = b / B
             scaled_loss = loss_i * scale
             scaled_loss.backward()
-            loss += loss_i
-            microbatch_losses.append(loss_i)
+            loss += scaled_loss.item()
+            microbatch_losses.append(loss_i.item())
         
-        return loss, microbatch_losses
+        return {"loss": loss, "microbatch_losses": microbatch_losses}
             
 
 

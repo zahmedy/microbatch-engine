@@ -27,6 +27,38 @@ class SimpleCNN(nn.Module):
         logits = self.classifier(x)
 
         return logits 
+    
+class DeepCNN(nn.Module):
+    def __init__(self, ) -> None:
+        super().__init__()
+
+        self.features = nn.Sequential(
+            nn.Conv2d(1, 32, KERNEL_SIZE, STRIDE, PADDING),
+            nn.ReLU(),
+            nn.MaxPool2d(MAXPOOL_KERNEL),
+            nn.Conv2d(32, 64, KERNEL_SIZE, STRIDE, PADDING),
+            nn.ReLU(),
+            nn.MaxPool2d(MAXPOOL_KERNEL),
+            nn.Conv2d(64, 128, KERNEL_SIZE, STRIDE, PADDING),
+            nn.ReLU(),
+            nn.Conv2d(128, 256, KERNEL_SIZE, STRIDE, PADDING),
+            nn.ReLU(),
+            nn.Conv2d(256, 512, KERNEL_SIZE, STRIDE, PADDING),
+            nn.ReLU()
+        )
+
+        self.classifier = nn.Sequential(
+            nn.Flatten(),
+            nn.Linear(512*7*7, 256),
+            nn.ReLU(),
+            nn.Linear(256, CLASSES)
+        )
+    
+    def forward(self, x):
+        x = self.features(x)
+        logits = self.classifier(x)
+
+        return logits
 
 
 if __name__ == "__main__":

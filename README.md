@@ -1,5 +1,10 @@
 # microbatch-engine
 
+[![Tests](https://github.com/zahmedy/microbatch-engine/actions/workflows/python-app.yml/badge.svg)](https://github.com/zahmedy/microbatch-engine/actions/workflows/python-app.yml)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+
 A minimal PyTorch project to master **shapes, batch dimensions, and training loops** by building a micro-batch training engine from scratch.
 
 > Goal: demonstrate clean micro-batch training, gradient accumulation, and reproducibility on Fashion-MNIST without hiding the math or shapes.
@@ -54,6 +59,10 @@ The script trains for five epochs and reports average train loss per sample and 
 ```bash
 pytest
 ```
+
+## Test status
+- Current environment: tests **not run** here; use `pytest` locally after installing dependencies.
+- CI: not configured yet.
 
 ## Design notes
 - **Micro-batching:** full batch `(B, C, H, W)` is split into `microbatches` chunks along `B`. Each micro-loss is scaled by `len(chunk) / B` before `backward()` so accumulated grads match a single large-batch pass.

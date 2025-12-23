@@ -14,15 +14,19 @@ class MicroBatchEngine():
 
         self.optimizer.zero_grad()
 
+        # Split to chunks equal to microbatchs along batch dim
+        x_chunks = x.chunk(self.microbatches, dim=0)
+        y_chunks = y.chunk(self.microbatches, dim=0)
+
         B = x.shape[0] # Full batch size from tensor
         assert B % self.microbatches == 0
 
         microbatch_losses = []
         loss = 0
         for microbatch in range(self.microbatches):
-            x_chunks = x.chunk(self.microbatches, dim=0)
-            y_chunks = y.chunk(self.microbatches, dim=0)
-            x_i, y_i = x_chunks[microbatch], y_chunks[microbatch]
+            # Work on first microbatch
+            x_i = x_chunks[microbatch]
+            y_i = y_chunks[microbatch]
 
             logits = self.model(x_i)
 
@@ -33,6 +37,8 @@ class MicroBatchEngine():
             scaled_loss.backward()
             loss += scaled_loss.item()
             microbatch_losses.append(loss_i.item())
+        
+        self.optimizer.step()
         
         return {"loss": loss, "microbatch_losses": microbatch_losses}
             

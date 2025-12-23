@@ -1,79 +1,69 @@
 # microbatch-engine
 
-A minimal PyTorch project to master **shapes, batch dimensions, and training loops** by building a
-micro-batch training engine from scratch.
+A minimal PyTorch project to master **shapes, batch dimensions, and training loops** by building a micro-batch training engine from scratch.
 
-```microbatch-engine/
-  README.md
-  pyproject.toml
-  .gitignore
-  src/
-    microbatch_engine/
-      __init__.py
-      config.py
-      engine.py
-      models.py
-      data.py
-      utils.py
-  tests/
-    test_engine_shapes.py
-    test_grad_accum_equivalence.py
-  scripts/
-    train_mnist.py
+> Goal: demonstrate clean micro-batch training, gradient accumulation, and reproducibility on Fashion-MNIST without hiding the math or shapes.
+
+## Highlights
+- Micro-batch engine that accumulates gradients and steps once per full batch.
+- Simple CNN backbone sized for 28x28 grayscale inputs.
+- Fashion-MNIST data pipeline with normalization and train/test loaders.
+- Training + evaluation script for quick benchmarking on CPU or Apple Silicon (MPS).
+- Pytest scaffolding for gradient-accumulation equivalence.
+
+## Project layout
+```
+microbatch-engine/
+├─ README.md
+├─ LICENSE
+├─ CONTRIBUTING.md
+├─ pyproject.toml
+├─ scripts/
+│  └─ train_mnist.py
+├─ src/microbatch_engine/
+│  ├─ __init__.py
+│  ├─ config.py
+│  ├─ data.py
+│  ├─ engine.py
+│  ├─ models.py
+│  └─ utils.py
+└─ tests/
+   ├─ test_engine_shapes.py
+   └─ test_grad_accum_equivalence.py
 ```
 
-## Why this repo exists
-I want to stop “hoping” my tensors align and start **knowing**:
-- how `(B, ...)` gets split into micro-batches
-- how loss reduction affects gradient accumulation
-- how AMP changes dtypes without changing shapes
-- how to debug shape + broadcasting bugs fast
+## Getting started
+1) Create and activate a Python 3.10+ environment.
+2) Install the project in editable mode:
+   ```bash
+   pip install -e .
+   ```
+3) (Optional) install dev tools:
+   ```bash
+   pip install -r requirements-dev.txt
+   ```
 
-## Shape contrast 
-### Input (B, 1, 28, 28) (Batch, Channel , Hieght, Width)
-### After Conv1/ReLU/Pool (B, 8, 14, 14)
-### After Conv2/ReLU/Pool (B, 16, 7, 7)
-### After flatten (B, 16*7*7)
-### Model output logits (B, 10)
-### Labels (B, )
-
-## Batch Format
-### (x, y)
-- x: (B, 1, 28, 28)
-- y: (B, )
-
-## Micro-batch split
-### Engine Split along dim=0
-### Produce N micro-batches:
-- x_i: (B/N, 1, 28, 28)
-- y_i: (B/N, )
-
-## Engine Contract
-- Batch: (x, y)
-- Engine only splits on dim=0 (batch axis)
-- Call zero_grad() once before micro-batch loop
-- For each micro-batch: forward → loss → scale loss → backward
-- After loop: optimizer.step()
-- Return metrics: full-batch loss (and optionally grad norm)
-
-## Features (planned)
-### Phase 1 — Micro-batch engine
-- Split a batch into N micro-batches
-- Accumulate gradients across micro-batches
-- Step optimizer once per full batch
-- Optional shape tracing per module
-
-### Phase 2 — AMP (Mixed Precision)
-- `autocast`
-- `GradScaler`
-- Correct handling of overflow / skipped steps
-
-### Phase 3 — “Fake DataParallel” (single machine)
-- Model replicas
-- Scatter micro-batches to replicas
-- Gather grads back to a master model
-- Sync weights
-
-## Quickstart (after implementation)
+### Train and evaluate
+This fetches Fashion-MNIST automatically:
 ```bash
-python -m scripts.train_mnist --microbatches 4 --amp
+python scripts/train_mnist.py
+```
+The script trains for five epochs and reports average train loss per sample and final test accuracy.
+
+### Run tests
+```bash
+pytest
+```
+
+## Design notes
+- **Micro-batching:** full batch `(B, C, H, W)` is split into `microbatches` chunks along `B`. Each micro-loss is scaled by `len(chunk) / B` before `backward()` so accumulated grads match a single large-batch pass.
+- **Shapes-first:** assertions catch unexpected dimensionality early; configs keep kernel sizes, strides, and padding in one place.
+- **Reproducibility:** `seed_all` seeds Python, NumPy, and PyTorch (CPU/MPS) to compare full vs micro-batch gradient flows.
+
+## Roadmap (snapshot)
+- Phase 1: core micro-batch engine and CNN baseline ✅
+- Phase 2: AMP (autocast + GradScaler) ◻︎
+- Phase 3: single-machine “fake DataParallel” ◻︎
+
+## License
+MIT — see `LICENSE`.

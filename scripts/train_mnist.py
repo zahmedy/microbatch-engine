@@ -6,18 +6,7 @@ from microbatch_engine.config import LR, DEVICE
 from torch import optim, nn
 import torch
 
-## Get data to train 
-train_loader, test_loader = get_dataloaders()
-
-# Set up model, Enginee, loss function and optimizer
-model = SimpleCNN()
-model = model.to(DEVICE)
-
-loss_fn = nn.CrossEntropyLoss()
-optimizer = optim.Adam(model.parameters(), lr=LR)
-engine = MicroBatchEngine(model, optimizer, loss_fn)
-
-def train():
+def train(model, engine, loss_fn, optimizer):
     epoch_loss = 0
     epoch_samples = 0
 
@@ -62,5 +51,15 @@ def evaluation():
 
 
 if __name__ == "__main__":
-    train()
+    ## Get data to train 
+    train_loader, test_loader = get_dataloaders()
+
+    # Set up model, Enginee, loss function and optimizer
+    model = SimpleCNN()
+    model = model.to(DEVICE)
+
+    loss_fn = nn.CrossEntropyLoss()
+    optimizer = optim.Adam(model.parameters(), lr=LR)
+    engine = MicroBatchEngine(model, optimizer, loss_fn)
+    train(model, engine, loss_fn, optimizer)
     evaluation()

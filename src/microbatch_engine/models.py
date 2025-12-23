@@ -33,17 +33,17 @@ class DeepCNN(nn.Module):
         super().__init__()
 
         self.features = nn.Sequential(
-            nn.Conv2d(1, 32, KERNEL_SIZE, STRIDE, PADDING),
+            nn.Conv2d(1, 32, kernel_size=KERNEL_SIZE, stride=STRIDE, padding=PADDING),
             nn.ReLU(),
             nn.MaxPool2d(MAXPOOL_KERNEL),
-            nn.Conv2d(32, 64, KERNEL_SIZE, STRIDE, PADDING),
+            nn.Conv2d(32, 64, kernel_size=KERNEL_SIZE, stride=STRIDE, padding=PADDING),
             nn.ReLU(),
             nn.MaxPool2d(MAXPOOL_KERNEL),
-            nn.Conv2d(64, 128, KERNEL_SIZE, STRIDE, PADDING),
+            nn.Conv2d(64, 128, kernel_size=KERNEL_SIZE, stride=STRIDE, padding=PADDING),
             nn.ReLU(),
-            nn.Conv2d(128, 256, KERNEL_SIZE, STRIDE, PADDING),
+            nn.Conv2d(128, 256, kernel_size=KERNEL_SIZE, stride=STRIDE, padding=PADDING),
             nn.ReLU(),
-            nn.Conv2d(256, 512, KERNEL_SIZE, STRIDE, PADDING),
+            nn.Conv2d(256, 512, kernel_size=KERNEL_SIZE, stride=STRIDE, padding=PADDING),
             nn.ReLU()
         )
 

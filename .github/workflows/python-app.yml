@@ -1,4 +1,4 @@
-name: Lint and Test Job
+name: Lint & Test
 
 # Trigger the workflow on pushes or pull requests to the main branch
 on:

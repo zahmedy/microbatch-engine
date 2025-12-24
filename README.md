@@ -1,4 +1,4 @@
-# microbatch-engine
+# Microbatch-Engine
 
 [![Tests](https://github.com/zahmedy/microbatch-engine/actions/workflows/python-app.yml/badge.svg)](https://github.com/zahmedy/microbatch-engine/actions/workflows/python-app.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)

@@ -52,7 +52,7 @@ def evaluation(model, loss_fn):
 
 if __name__ == "__main__":
     ## Get data to train 
-    train_loader, test_loader = get_dataloaders()
+    train_loader, test_loader = get_dataloaders("cifar")
 
     # Set up model, Enginee, loss function and optimizer
     model = DeepCNN()

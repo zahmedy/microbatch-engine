@@ -3,7 +3,7 @@ from torchvision import datasets, transforms
 from torch.utils.data import DataLoader, Dataset
 import torch
 
-from microbatch_engine.config import BATCH_SIZE, MEAN, STD
+from microbatch_engine.config import BATCH_SIZE, MEAN, STD, MEAN_MNIST, STD_MNIST
 
 class SyntheticData(Dataset):
     """Dataset class to create Synthetic Data"""
@@ -20,21 +20,28 @@ class SyntheticData(Dataset):
         label = self.labels[index]
         return  sample, label
 
-def get_dataloaders():
+def get_dataloaders(dataset):
     """Generate Dataloaders from CIFAR10 Dataset"""
+    if dataset == "cifar":
+        ds = datasets.CIFAR10
+    else:
+        ds = datasets.FashionMNIST
+        MEAN = MEAN_MNIST
+        STD = STD_MNIST
+
     transformer = transforms.Compose(
         [transforms.ToTensor(), transforms.Normalize(MEAN, STD)]
     )
 
-    train_dataset = datasets.CIFAR10("data/", 
-                                    train=True,
-                                    download=True,
-                                    transform=transformer,)
+    train_dataset = ds("data/", 
+                            train=True,
+                            download=True,
+                            transform=transformer,)
     
-    test_dataset = datasets.CIFAR10("data/", 
-                                    train=False,
-                                    download=True,
-                                    transform=transformer,)
+    test_dataset = ds("data/", 
+                            train=False,
+                            download=True,
+                            transform=transformer,)
 
     train_dataloader = DataLoader(train_dataset, 
                                   batch_size=BATCH_SIZE,
@@ -78,7 +85,7 @@ def generate_quadrant_batch(batch_size, img_size=224, square_size=40):
     return images, labels
 
 if __name__ == "__main__":
-    train_dl, test_dl = get_dataloaders()
+    train_dl, test_dl = get_dataloaders("cifar")
 
     x, y = next(iter(train_dl))
 

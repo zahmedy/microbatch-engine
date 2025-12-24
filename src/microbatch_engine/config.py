@@ -12,6 +12,9 @@ MICROBATCHS = 8
 MEAN = (0.4914, 0.4822, 0.4465)
 STD = (0.2470, 0.2435, 0.2616)
 
+MEAN_MNIST = 0.1307
+STD_MNIST = 0.3081
+
 LR = 0.005
 DEVICE = "mps" if torch.backends.mps.is_available() else "cpu"
 EPOCHS = 8

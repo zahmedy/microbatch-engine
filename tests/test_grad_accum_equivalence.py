@@ -20,7 +20,7 @@ def test_gradient_accum_equivalence():
     model_micro.to(DEVICE)
 
     # Use test loader as shuffle set to False
-    _, test_loader = get_dataloaders()
+    _, test_loader = get_dataloaders("mnist")
     # single_batch 
     x, y = next(iter(test_loader))
     x, y = x.to(DEVICE), y.to(DEVICE)

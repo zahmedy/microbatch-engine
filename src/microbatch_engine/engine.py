@@ -43,6 +43,7 @@ class MicroBatchEngine():
             scale = b / B
             scaled_loss = loss_i * scale
             scaled_loss.backward()
+            nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             loss += scaled_loss.item()
             microbatch_losses.append(loss_i.item())
         
@@ -66,7 +67,7 @@ if __name__ == "__main__":
     model = model.to(DEVICE)
 
     loss_fn = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(model.parameters(), lr=LR)
+    optimizer = optim.Adam(model.parameters(), lr=LR, weight_decay=1e-4)
     engine = MicroBatchEngine(model, optimizer, loss_fn, MICROBATCHS)
 
     epoch_loss = 0

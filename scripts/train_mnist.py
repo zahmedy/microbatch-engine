@@ -1,7 +1,7 @@
-from microbatch_engine.models import SimpleCNN
+from microbatch_engine.models import SimpleCNN, DeepCNN
 from microbatch_engine.data import get_dataloaders
 from microbatch_engine.engine import MicroBatchEngine
-from microbatch_engine.config import LR, DEVICE
+from microbatch_engine.config import LR, DEVICE, MICROBATCHS
 
 from torch import optim, nn
 import torch
@@ -27,7 +27,7 @@ def train(model, engine, loss_fn, optimizer):
 
         print(f"Epoch: {epoch} | Avg Loss per sample: {epoch_loss/epoch_samples}")
 
-def evaluation():
+def evaluation(model, loss_fn):
     model.eval()
     test_loss_sum = 0
     test_correct = 0
@@ -55,11 +55,11 @@ if __name__ == "__main__":
     train_loader, test_loader = get_dataloaders()
 
     # Set up model, Enginee, loss function and optimizer
-    model = SimpleCNN()
+    model = DeepCNN()
     model = model.to(DEVICE)
 
     loss_fn = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=LR)
-    engine = MicroBatchEngine(model, optimizer, loss_fn)
+    engine = MicroBatchEngine(model, optimizer, loss_fn, MICROBATCHS)
     train(model, engine, loss_fn, optimizer)
-    evaluation()
+    evaluation(model, loss_fn)

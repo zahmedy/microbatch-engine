@@ -6,10 +6,12 @@ MAXPOOL_KERNEL = 2
 STRIDE = 1
 PADDING = 1
 CLASSES = 10
-BATCH_SIZE = 64
-MEAN = 0.1307
-STD = 0.3081
-LR = 0.001
+BATCH_SIZE = 512
+MICROBATCHS = 8
+
+MEAN = (0.4914, 0.4822, 0.4465)
+STD = (0.2470, 0.2435, 0.2616)
+
+LR = 0.005
 DEVICE = "mps" if torch.backends.mps.is_available() else "cpu"
-EPOCHS = 5
-MICROBATCHS = 4
+EPOCHS = 8

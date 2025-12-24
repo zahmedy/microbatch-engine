@@ -33,7 +33,7 @@ class DeepCNN(nn.Module):
         super().__init__()
 
         self.features = nn.Sequential(
-            nn.Conv2d(1, 32, kernel_size=KERNEL_SIZE, stride=STRIDE, padding=PADDING),
+            nn.Conv2d(3, 32, kernel_size=KERNEL_SIZE, stride=STRIDE, padding=PADDING),
             nn.ReLU(),
             nn.MaxPool2d(MAXPOOL_KERNEL),
             nn.Conv2d(32, 64, kernel_size=KERNEL_SIZE, stride=STRIDE, padding=PADDING),
@@ -49,9 +49,9 @@ class DeepCNN(nn.Module):
 
         self.classifier = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(512*7*7, 256),
+            nn.Linear(512*56*56, 512),
             nn.ReLU(),
-            nn.Linear(256, CLASSES)
+            nn.Linear(512, CLASSES)
         )
     
     def forward(self, x):

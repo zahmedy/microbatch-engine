@@ -69,6 +69,11 @@ pytest
 - **Shapes-first:** assertions catch unexpected dimensionality early; configs keep kernel sizes, strides, and padding in one place.
 - **Reproducibility:** `seed_all` seeds Python, NumPy, and PyTorch (CPU/MPS) to compare full vs micro-batch gradient flows.
 
+## Practical note: microbatches vs memory
+- Same model and batch size can toggle OOM depending on `microbatches`.
+- `microbatches=1` (full batch) can OOM on limited-memory devices.
+- Increasing to `microbatches=8` splits the batch, reduces peak memory, and runs successfully.
+
 ## Roadmap (snapshot)
 - Phase 1: core micro-batch engine and CNN baseline ✅
 - Phase 2: AMP (autocast + GradScaler) ◻︎

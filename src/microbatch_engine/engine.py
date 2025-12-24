@@ -4,7 +4,7 @@ from torch.utils.data import DataLoader
 
 from microbatch_engine.config import DEVICE, MICROBATCHS, LR, BATCH_SIZE, EPOCHS
 from microbatch_engine.models import DeepCNN
-from microbatch_engine.data import SyntheticData
+from microbatch_engine.data import SyntheticData, generate_quadrant_batch
 
 
 
@@ -54,8 +54,7 @@ class MicroBatchEngine():
 
 if __name__ == "__main__":
     ### STRESS RUN TO FORCE OOM 
-    highres_img = torch.randn([BATCH_SIZE, 3, 224, 224])
-    highre_y = torch.randint(0, 10, (BATCH_SIZE,))
+    highres_img, highre_y = generate_quadrant_batch(BATCH_SIZE, 224)
     highres_img = highres_img.to(DEVICE)
     highre_y = highre_y.to(DEVICE)
 
